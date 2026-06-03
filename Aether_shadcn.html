@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function configureTailwind() {
+            if (window.tailwind) {
+                window.tailwind.config = {
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['Geist Sans', 'system-ui', '-apple-system', 'sans-serif'],
+                                mono: ['Geist Mono', 'ui-monospace', 'monospace']
+                            },
+                            colors: {
+                                border: "hsl(var(--border))",
+                                input: "hsl(var(--input))",
+                                ring: "hsl(var(--ring))",
+                                background: "hsl(var(--background))",
+                                foreground: "hsl(var(--foreground))",
+                                primary: {
+                                    DEFAULT: "hsl(var(--primary))",
+                                    foreground: "hsl(var(--primary-foreground))"
+                                },
+                                secondary: {
+                                    DEFAULT: "hsl(var(--secondary))",
+                                    foreground: "hsl(var(--secondary-foreground))"
+                                },
+                                destructive: {
+                                    DEFAULT: "hsl(var(--destructive))",
+                                    foreground: "hsl(var(--destructive-foreground))"
+                                },
+                                muted: {
+                                    DEFAULT: "hsl(var(--muted))",
+                                    foreground: "hsl(var(--muted-foreground))"
+                                },
+                                accent: {
+                                    DEFAULT: "hsl(var(--accent))",
+                                    foreground: "hsl(var(--accent-foreground))"
+                                },
+                                card: {
+                                    DEFAULT: "hsl(var(--card))",
+                                    foreground: "hsl(var(--card-foreground))"
+                                }
+                            },
+                            borderRadius: {
+                                lg: "var(--radius)",
+                                md: "calc(var(--radius) - 2px)",
+                                sm: "calc(var(--radius) - 4px)"
+                            }
+                        }
+                    }
+                };
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', configureTailwind);
+        } else {
+            configureTailwind();
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Geist font family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 222.2 84% 4.9%;
+            --radius: 0.5rem;
+        }
+
+        /* shadcn/ui base styles */
+        * {
+            border-color: hsl(var(--border));
+        }
+
+        html, body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Geist Sans', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Geist Mono for code and monospace elements */
+        code, pre, .font-mono, kbd {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+        }
+
+        /* shadcn/ui inspired base components */
+        .shadcn-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.1s ease;
+            border: 1px solid transparent;
+            height: 2.25rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .shadcn-button:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px hsl(var(--ring));
+        }
+
+        /* shadcn button variants */
+        .shadcn-button-default {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        .shadcn-button-default:hover {
+            background-color: hsl(222.2 47.4% 8%);
+        }
+
+        .shadcn-button-ghost {
+            background-color: transparent;
+        }
+        .shadcn-button-ghost:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .shadcn-button-outline {
+            background-color: transparent;
+            border-color: hsl(var(--border));
+        }
+        .shadcn-button-outline:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .shadcn-button-sm {
+            height: 2rem;
+            padding-left: 0.625rem;
+            padding-right: 0.625rem;
+            font-size: 0.75rem;
+        }
+
+        .shadcn-input {
+            display: flex;
+            height: 2.5rem;
+            width: 100%;
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--input));
+            background-color: hsl(var(--background));
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.1s ease;
+        }
+
+        .shadcn-input:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 1px hsl(var(--ring));
+        }
+
+        /* Global focus styles for shadcn feel */
+        button:focus-visible,
+        [role="button"]:focus-visible,
+        .chat-history-item:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px hsl(var(--ring));
+        }
+
+        .shadcn-card {
+            border-radius: calc(var(--radius) + 2px);
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--card));
+            color: hsl(var(--card-foreground));
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .chat-bubble { 
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        /* shadcn-style message bubbles */
+        .chat-bubble.bg-gray-900,
+        .chat-bubble.bg-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        .chat-bubble.bg-white {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--card-foreground));
+        }
+        .schedule-block {
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .floating-input {
+            box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.05), 0 -2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        .chat-history-item {
+            transition: all 0.1s ease;
+            position: relative;
+            border-radius: var(--radius);
+            padding: 2px 4px;
+        }
+        .chat-history-item:hover {
+            background-color: hsl(var(--accent));
+        }
+        .chat-history-item.active {
+            background-color: hsl(var(--accent));
+            font-weight: 500;
+        }
+
+        .chat-menu-btn {
+            opacity: 0;
+            transition: opacity 0.1s ease;
+            width: 28px;
+            height: 28px;
+        }
+        .chat-history-item:hover .chat-menu-btn,
+        .chat-history-item.active .chat-menu-btn {
+            opacity: 1;
+        }
+        .chat-menu-btn:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .chat-title-tooltip {
+            background: #1f2937;
+            color: #f9fafb;
+            font-size: 13px;
+            line-height: 1.35;
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+            max-width: 320px;
+            white-space: normal;
+            word-break: break-word;
+            pointer-events: none;
+            z-index: 999999;
+        }
+
+        /* Ensure collapsed sidebar button returns to original centered position in the 64px rail */
+        #sidebar.collapsed .sidebar-brand-left {
+            width: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden;
+        }
+
+        /* Simple and reliable sidebar collapse */
+        #sidebar {
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        #sidebar.collapsed {
+            width: 64px;
+        }
+
+        #sidebar.collapsed .sidebar-text {
+            width: 0;
+            opacity: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            pointer-events: none;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+            transition-delay: 0.05s;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+        }
+
+        .sidebar-text {
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        #sidebar.collapsed .sidebar-icon-only {
+            display: flex;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
+            padding: 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sidebar:not(.collapsed) .sidebar-icon-only:not([onclick*="toggleSidebar"]) {
+            display: none;
+        }
+
+        /* Unified centered icon rail for collapsed left nav */
+        #sidebar.collapsed .p-4 {
+            padding: 8px 0;
+            justify-content: center;
+        }
+
+        /* Center the header toggle button in collapsed rail using the same icon container pattern (no dedicated chevron size/padding rule) */
+        #sidebar.collapsed .px-3.py-3 {
+            justify-content: center;
+        }
+
+        /* Light optical adjustment for the chevron glyph only (arrow visual center often sits slightly right of geometric center).
+           Keeps the 40x40 button container itself on the exact same vertical line as +, search, calendar.
+           No change to container size, padding, or layout rules. */
+        #sidebar.collapsed #sidebar-chevron {
+            transform: translateX(-1px);
+        }
+
+        #sidebar.collapsed .px-2 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        /* Collapsed footer profile alignment - consistent with icon rail */
+        #sidebar.collapsed .p-4 {
+            padding: 8px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #sidebar.collapsed .p-4 > div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        #sidebar.collapsed .p-4 .profile-avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            border-radius: 9999px;
+        }
+
+        #sidebar.collapsed .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        /* Make Tools icons stack as clean centered column in collapsed rail */
+        #sidebar.collapsed .tools-section {
+            padding-top: 0;
+            padding-bottom: 4px;
+            overflow: hidden;
+        }
+
+        /* In collapsed state, let New Chat icon flow naturally with Search/Plan icons (no extra gap) */
+        #sidebar.collapsed .new-chat-wrapper {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Ensure Tools label completely collapses in collapsed state to avoid gap */
+        #sidebar.collapsed .tools-section .sidebar-text {
+            padding: 0 !important;
+            margin: 0 !important;
+            height: 0 !important;
+            overflow: hidden;
+        }
+
+        /* Prevent text reflow in flex items during collapse */
+        #sidebar.collapsed .flex.items-center {
+            overflow: hidden;
+        }
+
+        /* Hide chat list items entirely when sidebar is collapsed (per request) */
+        #sidebar.collapsed .chat-history-item {
+            display: none;
+        }
+
+        /* Hide the expanded Plan row on collapse so only the small icon-only version shows */
+        #sidebar.collapsed .plan-expanded {
+            display: none;
+        }
+
+        /* Hide the expanded Search item on collapse */
+        #sidebar.collapsed .search-expanded {
+            display: none;
+        }
+
+        /* Hide the expanded New Chat item on collapse so only the clean icon-only version shows */
+        #sidebar.collapsed .new-chat-expanded {
+            display: none;
+        }
+
+        /* Initial centered input layout - upper-middle positioning for hero stack */
+        #chat-content.initial-centered {
+            justify-content: flex-start;   /* not center, so we can control position from top */
+            padding-top: 0;
+        }
+        #chat-content.initial-centered #chat-messages {
+            display: none;
+        }
+        #chat-content.initial-centered #chat-input-bar {
+            background: transparent;
+            border-top: none;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Hero headline styling - only visible in empty state */
+        .hero-headline {
+            display: none;
+        }
+        #chat-content.initial-centered .hero-headline {
+            display: block;
+        }
+
+        .hero-headline h1 {
+            font-weight: 500;
+            color: #1f2937;
+            letter-spacing: -0.02em;
+        }
+
+        /* Hero stack positioned in upper-middle area (GPT/Claude style) */
+        #chat-content.initial-centered #chat-input-bar > .max-w-\[720px\].mx-auto {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: clamp(160px, 28vh, 260px); /* upper-middle positioning, stable top */
+        }
+
+        /* Sidebar-aware centering for hero stack */
+        #chat-content.initial-centered #chat-input-bar {
+            padding-left: 0;
+        }
+        body.sidebar-open #chat-content.initial-centered #chat-input-bar {
+            padding-left: 128px; /* Compensate for open sidebar so the stack centers in available space */
+        }
+
+        /* Enhanced soft floating glow for the homepage centered input (Gemini-like restrained ambient light) */
+        #chat-content.initial-centered #chat-input-bar .max-w-\[720px\] .flex.items-end {
+            box-shadow: 
+                0 1px 3px 0 rgb(0 0 0 / 0.05),
+                0 10px 30px -5px rgb(0 0 0 / 0.09),
+                0 0 0 1px rgb(0 0 0 / 0.04),
+                0 6px 20px -3px rgb(100 116 139 / 0.08); /* a bit heavier again for more presence while keeping soft premium feel */
+            /* Restrained, premium floating effect. Slightly heavier lift for better presence. */
+        }
+
+        /* Non-empty chat state: messages scroll, input stays at bottom with consistent width */
+        #chat-content:not(.initial-centered) #chat-messages {
+            padding-top: 3rem; /* more natural top spacing for first message */
+            padding-bottom: 160px;
+            padding-left: 3rem;
+            padding-right: 1.5rem;
+        }
+        #chat-content:not(.initial-centered) #chat-input-bar {
+            padding-top: 8px;
+            padding-bottom: 24px;
+            padding-left: 3rem;
+            padding-right: 1.5rem;
+            background-color: hsl(var(--background));
+        }
+
+
+
+        /* ==================== Global Search Overlay ==================== */
+        .global-search-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 99990;
+            display: none;
+        }
+        .global-search-backdrop.active {
+            display: block;
+        }
+
+        .global-search-panel {
+            position: fixed;
+            top: 6%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(86vw, 1400px);
+            height: min(84vh, 820px);
+            background: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) + 6px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            z-index: 99999;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .global-search-panel.active {
+            display: flex;
+        }
+
+        .global-search-input-wrapper {
+            padding: 16px 20px;
+            border-bottom: 1px solid hsl(var(--border));
+            background: hsl(var(--background));
+        }
+
+        .global-search-input {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            outline: none;
+            background: hsl(var(--muted));
+        }
+        .global-search-input:focus {
+            background: hsl(var(--background));
+        }
+
+        .global-search-body {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .global-search-results {
+            width: 40%;
+            border-right: 1px solid hsl(var(--border));
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background: hsl(var(--background));
+        }
+
+        .global-search-preview {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background: hsl(var(--muted));
+        }
+
+        .search-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: hsl(var(--muted-foreground));
+            padding: 8px 16px 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-result-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.1s;
+        }
+        .search-result-item:hover {
+            background: #f3f4f6;
+        }
+        .search-result-item.selected {
+            background: #e5e7eb;
+        }
+
+        .search-result-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .search-result-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .search-result-meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .search-quick-actions {
+            display: none;
+            gap: 4px;
+        }
+        .search-result-item:hover .search-quick-actions,
+        .search-result-item.selected .search-quick-actions {
+            display: flex;
+        }
+
+        .search-quick-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 6px;
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            cursor: pointer;
+        }
+        .search-quick-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .search-preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .search-preview-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        /* Compact chat preview card inside search preview panel (right side) */
+        .search-preview-chat {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px 12px;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+        }
+
+        .search-footer {
+            padding: 10px 16px;
+            border-top: 1px solid #f3f4f6;
+            background: #f9fafb;
+            font-size: 12px;
+            color: #6b7280;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .search-empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* ==================== shadcn-style Secondary Menu ==================== */
+        .aether-secondary-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) + 2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 4px;
+            min-width: 180px;
+            z-index: 99999;
+            display: none;
+            overflow: hidden;
+            font-size: 0.875rem;
+        }
+
+        .aether-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: background-color 0.1s ease;
+        }
+
+        .aether-menu-item:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .aether-menu-item i {
+            width: 16px;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .aether-menu-divider {
+            height: 1px;
+            background-color: hsl(var(--border));
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Main App Container -->
+    <div class="flex h-screen">
+        
+        <!-- Collapsible Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r flex flex-col overflow-hidden collapsed">
+            <!-- Sidebar Header: App identity (fixed, no divider) -->
+            <div class="px-3 py-3 flex items-center justify-between">
+                <div class="px-3 sidebar-brand-left">
+                    <span class="sidebar-text text-base font-semibold text-gray-800">Aether</span>
+                </div>
+                <button onclick="toggleSidebar()" class="p-1 hover:bg-gray-100 cursor-pointer rounded-xl items-center justify-center sidebar-icon-only">
+                    <i id="sidebar-chevron" class="fa-solid fa-chevron-right text-gray-600"></i>
+                </button>
+            </div>
+
+            <!-- New Chat (above Tools, same style as other tools) -->
+            <div class="px-3 pt-2 pb-1 new-chat-wrapper">
+                <div onclick="newChat()" 
+                     class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm group new-chat-expanded transition-colors">
+                    <i class="fa-solid fa-plus w-4 text-gray-600 group-hover:text-gray-900"></i>
+                    <span class="sidebar-text">New Chat</span>
+                </div>
+                <!-- Collapsed New Chat icon -->
+                <div onclick="newChat()" 
+                     class="hidden w-10 h-10 items-center justify-center hover:bg-gray-100 cursor-pointer rounded-xl sidebar-icon-only">
+                    <i class="fa-solid fa-plus text-gray-600"></i>
+                </div>
+            </div>
+
+            <!-- Tools (upper area) -->
+            <div class="px-3 pt-2 pb-1 tools-section">
+                <div class="px-3 py-1 text-xs font-normal text-gray-400 mb-1 sidebar-text">Tools</div>
+
+                <!-- Search -->
+                <div onclick="openGlobalSearch()" 
+                     id="sidebar-search-btn"
+                     class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm group search-expanded transition-colors">
+                    <i class="fa-solid fa-search w-4 text-gray-600 group-hover:text-gray-900"></i>
+                    <span class="sidebar-text">Search</span>
+                </div>
+                <!-- Collapsed Search icon -->
+                <div onclick="openGlobalSearch()" 
+                     class="hidden w-10 h-10 items-center justify-center hover:bg-gray-100 cursor-pointer rounded-xl sidebar-icon-only">
+                    <i class="fa-solid fa-search text-gray-600"></i>
+                </div>
+
+                <!-- Plan -->
+                <div onclick="showPlanView()" 
+                     class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm plan-expanded transition-colors">
+                    <i class="fa-solid fa-calendar-alt w-4 text-gray-600"></i>
+                    <span class="sidebar-text">Plan</span>
+                </div>
+                <!-- Collapsed Plan icon -->
+                <div onclick="showPlanView()" 
+                     class="hidden w-10 h-10 items-center justify-center hover:bg-gray-100 cursor-pointer rounded-xl sidebar-icon-only">
+                    <i class="fa-solid fa-calendar-alt text-gray-600"></i>
+                </div>
+            </div>
+
+            <!-- Chat History -->
+            <div class="flex-1 overflow-y-auto overflow-x-hidden px-3 pt-3 pb-2 space-y-1 text-sm">
+                <div onclick="showChatView()" class="px-3 py-1 text-xs font-normal text-gray-400 sidebar-text mb-1">Chats</div>
+                
+                <div onclick="switchChat(1)" data-chat-id="1" class="chat-history-item group px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 flex items-center gap-2">
+                    <div class="flex-1 min-w-0 overflow-hidden">
+                        <div class="truncate sidebar-text">Schedule deep work for next week</div>
+                    </div>
+                    <button class="chat-menu-btn flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-md"
+                            onclick="event.stopImmediatePropagation(); showChatMenu(this, 1)">
+                        <i class="fa-solid fa-ellipsis-vertical text-[13px]"></i>
+                    </button>
+                </div>
+                <div onclick="switchChat(2)" data-chat-id="2" class="chat-history-item group px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 flex items-center gap-2">
+                    <div class="flex-1 min-w-0 overflow-hidden">
+                        <div class="truncate sidebar-text">Prepare Q4 plan</div>
+                    </div>
+                    <button class="chat-menu-btn flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-md"
+                            onclick="event.stopImmediatePropagation(); showChatMenu(this, 2)">
+                        <i class="fa-solid fa-ellipsis-vertical text-[13px]"></i>
+                    </button>
+                </div>
+                <div onclick="switchChat(3)" data-chat-id="3" class="chat-history-item group px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 flex items-center gap-2">
+                    <div class="flex-1 min-w-0 overflow-hidden">
+                        <div class="truncate sidebar-text">This week's meetings & follow-ups</div>
+                    </div>
+                    <button class="chat-menu-btn flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-md"
+                            onclick="event.stopImmediatePropagation(); showChatMenu(this, 3)">
+                        <i class="fa-solid fa-ellipsis-vertical text-[13px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t cursor-pointer" id="profile-trigger">
+                <div class="flex items-center gap-2 pl-2">
+                    <!-- shadcn-style pure color avatar with letter A -->
+                    <div class="profile-avatar w-6 h-6 flex-shrink-0 rounded-full bg-zinc-900 text-white flex items-center justify-center text-[11px] font-semibold tracking-[-0.5px]">
+                        A
+                    </div>
+                    <span class="sidebar-text text-sm font-medium text-gray-700">Alex</span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col" id="main-content">
+            
+            <!-- Chat Content (default) -->
+            <div id="chat-content" class="flex-1 flex flex-col">
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-6 bg-background">
+                    <!-- Messages populated by JS -->
+                </div>
+                
+                <div id="chat-input-bar" class="p-6 bg-transparent">
+                    <div class="max-w-[720px] mx-auto">
+                        <!-- Hero Headline - only visible in empty state -->
+                        <div class="hero-headline text-center mb-10">
+                            <h1 class="text-[34px] font-medium text-gray-800 tracking-tight">
+                                Good Morning, Alex
+                            </h1>
+                        </div>
+
+                        <!-- Long horizontal command bar (shadcn style) -->
+                        <div class="flex items-end bg-white border border-border rounded-2xl px-3 py-2 shadow-sm w-full transition-all">
+                            <!-- Secondary menu entry -->
+                            <button id="chat-plus-btn" class="shadcn-button shadcn-button-ghost w-8 h-8 flex-shrink-0 flex items-center justify-center text-muted-foreground hover:text-foreground mb-1 mr-3"
+                                    title="Add">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+
+                            <textarea id="chat-input" rows="1" 
+                                      class="flex-1 outline-none text-base px-2 py-2 resize-none max-h-[220px] overflow-y-auto leading-relaxed bg-transparent"
+                                      placeholder="How can I help you today"
+                                      oninput="autoResizeTextarea(this)"
+                                      onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
+
+                            <button onclick="sendChatMessage()" 
+                                    class="shadcn-button h-9 w-9 bg-gray-900 text-white hover:bg-gray-800 rounded-2xl flex items-center justify-center flex-shrink-0 ml-3 mb-1">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Content (hidden by default) -->
+            <div id="plan-content" class="hidden flex-1 flex flex-col bg-white">
+                <!-- Scrollable content area (title + cards) -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div class="max-w-5xl mx-auto w-full">
+                        <!-- Title -->
+                        <div class="mb-6">
+                            <div class="text-2xl font-semibold tracking-tight">Plan Review</div>
+                            <div class="text-sm text-muted-foreground">Generated from recent conversation · Oct 15</div>
+                        </div>
+
+                        <!-- Cards Grid: Two-column dashboard layout -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 md:grid-rows-[auto_auto] gap-6">
+                            
+                            <!-- Next - Large left card (spans both rows on desktop) -->
+                            <div class="md:row-span-2">
+                                <div class="shadcn-card p-6 h-full overflow-auto">
+                                    <div class="font-semibold text-xl mb-4 flex items-center gap-2 tracking-tight">
+                                        Next
+                                        <span class="text-xs px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-md font-medium">Core</span>
+                                    </div>
+                                    <div id="next-list" class="space-y-2">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tomorrow - Right top -->
+                            <div>
+                                <div class="shadcn-card p-5 h-full overflow-auto">
+                                    <div class="font-semibold mb-3 tracking-tight">Tomorrow</div>
+                                    <div id="tomorrow-list" class="space-y-2 text-sm">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- This Week - Right bottom -->
+                            <div>
+                                <div class="shadcn-card p-5 h-full overflow-auto">
+                                    <div class="font-semibold mb-3 tracking-tight">This Week</div>
+                                    <div id="week-list" class="space-y-2 text-sm">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Input Box in Plan View (aligned to same main content container) -->
+                <div class="p-6 bg-transparent">
+                    <div class="max-w-5xl mx-auto">
+                        <div class="flex items-center bg-white border border-border rounded-2xl px-3 py-2 shadow-sm">
+                            <!-- Secondary menu entry (like Grok/GPT +) -->
+                            <button id="plan-plus-btn" class="shadcn-button shadcn-button-ghost w-8 h-8 flex-shrink-0 flex items-center justify-center text-muted-foreground hover:text-foreground mr-3"
+                                    title="Add">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+
+                            <input id="plan-input" type="text" placeholder="Continue chatting with AI, e.g. Move tomorrow's tasks back a day" 
+                                   class="flex-1 outline-none text-base px-2 py-2" onkeypress="if(event.key === 'Enter') sendPlanMessage()">
+                            <button onclick="sendPlanMessage()" 
+                                    class="w-9 h-9 flex items-center justify-center bg-gray-900 text-white rounded-2xl hover:bg-black ml-3">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let suggestions = [];
+        let isQuickReview = false;
+        let sidebarCollapsed = true;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const chevron = document.getElementById('sidebar-chevron');
+            sidebarCollapsed = !sidebarCollapsed;
+
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                document.body.classList.remove('sidebar-open');
+                if (chevron) {
+                    chevron.classList.remove('fa-chevron-left');
+                    chevron.classList.add('fa-chevron-right');
+                }
+            } else {
+                sidebar.classList.remove('collapsed');
+                document.body.classList.add('sidebar-open');
+                if (chevron) {
+                    chevron.classList.remove('fa-chevron-right');
+                    chevron.classList.add('fa-chevron-left');
+                }
+            }
+        }
+
+        function showPlanView() {
+            // Hide chat content, show plan content
+            document.getElementById('chat-content').classList.add('hidden');
+            document.getElementById('plan-content').classList.remove('hidden');
+
+            // Seed some demo data if suggestions is empty (for reliable demo)
+            if (!suggestions || suggestions.length === 0) {
+                suggestions = [
+                    { id: 1, title: "Prepare course portfolio for next Monday", time: "19:00 - 21:30", duration: "2.5h", priority: "High", status: "pending" },
+                    { id: 2, title: "Follow up on client proposal feedback", time: "14:00 - 15:00", duration: "1h", priority: "Medium", status: "conflict" },
+                    { id: 3, title: "Review Q4 marketing strategy", time: "10:00 - 11:30", duration: "1.5h", priority: "High", status: "pending" }
+                ];
+            }
+
+            // Highlight plan in sidebar (simple visual)
+            document.querySelectorAll('#sidebar .cursor-pointer').forEach(el => el.classList.remove('bg-gray-100'));
+            // Clear chat active states when entering Plan
+            document.querySelectorAll('.chat-history-item').forEach(el => el.classList.remove('active'));
+
+            renderSchedule();
+        }
+
+        function showChatView() {
+            document.getElementById('plan-content').classList.add('hidden');
+            document.getElementById('chat-content').classList.remove('hidden');
+        }
+
+        function addMessage(role, content) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            
+            if (role === 'user') {
+                // User bubble aligned to the right of the shared content column (same as input box width)
+                div.className = 'max-w-[720px] mx-auto mb-12';
+                div.innerHTML = `
+                    <div class="flex justify-end">
+                        <div class="chat-bubble bg-gray-900 text-white px-4 py-2.5 text-[16px] leading-[1.7] rounded-2xl rounded-br-md">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+            } else {
+                // AI reply aligned to the left of the shared content column (same as input box width)
+                div.className = 'max-w-[720px] mx-auto mb-12';
+                div.innerHTML = `
+                    <div class="text-sm text-gray-500 mb-2">Thought for 2s</div>
+                    <div class="text-[16px] leading-[1.7] text-gray-800">
+                        ${content}
+                    </div>
+                    <div class="flex items-center gap-1 mt-2 text-gray-400">
+                        <button class="p-1 hover:text-gray-600 transition-colors" title="Copy"><i class="fa-regular fa-copy text-sm"></i></button>
+                        <button class="p-1 hover:text-gray-600 transition-colors" title="Regenerate"><i class="fa-solid fa-redo text-sm"></i></button>
+                        <button class="p-1 hover:text-gray-600 transition-colors" title="Like"><i class="fa-regular fa-thumbs-up text-sm"></i></button>
+                        <button class="p-1 hover:text-gray-600 transition-colors" title="More"><i class="fa-solid fa-ellipsis-h text-sm"></i></button>
+                    </div>
+                `;
+            }
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            if (!input.value.trim()) return;
+
+            const chatContent = document.getElementById('chat-content');
+            if (chatContent.classList.contains('initial-centered')) {
+                chatContent.classList.remove('initial-centered');
+            }
+
+            addMessage('user', input.value);
+            
+            setTimeout(() => {
+                addMessage('ai', `I've created a plan based on your input. Check it out in the Plan tab.`);
+                
+                generateSuggestionsFromInput(input.value);
+                input.value = '';
+            }, 800);
+        }
+
+        function sendScheduleMessage() {
+            const input = document.getElementById('plan-input');
+            if (!input.value.trim()) return;
+
+            alert(`AI received: "${input.value}"\n(Demo) Plan view updated`);
+            
+            if (suggestions.length > 0) {
+                suggestions[0].time = "10:00 - 12:00";
+                suggestions[0].status = "modified";
+                renderSchedule();
+            }
+            
+            input.value = '';
+        }
+
+        function generateSuggestionsFromInput(text) {
+            suggestions = [
+                {
+                    id: Date.now(),
+                    title: text.length > 20 ? text.substring(0, 20) + "..." : text,
+                    time: "19:00 - 21:00",
+                    duration: "2h",
+                    priority: "High",
+                    status: "pending"
+                },
+                {
+                    id: Date.now() + 1,
+                    title: "Prepare client proposal materials",
+                    time: "14:30 - 16:00",
+                    duration: "1.5h",
+                    priority: "Medium",
+                    status: "pending"
+                }
+            ];
+            
+            setTimeout(() => {
+                switchView('schedule');
+                renderSchedule();
+            }, 1200);
+        }
+
+        function renderSchedule() {
+            const nextList = document.getElementById('next-list');
+            const tomorrowList = document.getElementById('tomorrow-list');
+            const weekList = document.getElementById('week-list');
+
+            nextList.innerHTML = '';
+            tomorrowList.innerHTML = '';
+            weekList.innerHTML = '';
+
+            let filtered = suggestions;
+            if (isQuickReview) {
+                filtered = suggestions.filter(s => s.priority === 'High' || s.status === 'conflict');
+            }
+
+            filtered.forEach(s => {
+                const card = createScheduleCard(s);
+                if (s.title.includes("next") || s.priority === "High") {
+                    nextList.appendChild(card);
+                } else if (s.time.includes("tomorrow")) {
+                    tomorrowList.appendChild(card);
+                } else {
+                    weekList.appendChild(card);
+                }
+            });
+        }
+
+        function createScheduleCard(s) {
+            const div = document.createElement('div');
+            div.className = `shadcn-card p-5 rounded-lg border ${getCardBorder(s.status)}`;
+
+            div.innerHTML = `
+                <div class="font-medium tracking-tight">${s.title}</div>
+                <div class="text-sm text-muted-foreground mt-1">${s.time} · ${s.duration}</div>
+                <div class="flex items-center justify-between mt-3">
+                    <div class="text-xs px-2.5 py-0.5 rounded-full font-medium ${getPriorityColor(s.priority)}">${s.priority}</div>
+                    <div class="flex gap-2">
+                        ${getScheduleActions(s)}
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        function getCardBorder(status) {
+            if (status === 'conflict') return 'border-amber-300';
+            if (status === 'modified') return 'border-blue-300';
+            if (status === 'accepted') return 'border-green-200';
+            return 'border-gray-200';
+        }
+
+        function getPriorityColor(priority) {
+            if (priority === 'High') return 'bg-red-100 text-red-700';
+            if (priority === 'Medium') return 'bg-amber-100 text-amber-700';
+            return 'bg-gray-100 text-gray-600';
+        }
+
+        function getScheduleActions(s) {
+            if (s.status === 'accepted') {
+                return `<button onclick="unaccept(${s.id})" class="shadcn-button shadcn-button-ghost text-xs h-7 px-2 text-red-600 hover:bg-red-50">Cancel</button>`;
+            }
+            return `
+                <button onclick="acceptSuggestion(${s.id})" class="shadcn-button shadcn-button-ghost text-xs h-7 px-2 text-green-600 hover:bg-green-50">Accept</button>
+                <button onclick="modifySuggestion(${s.id})" class="shadcn-button shadcn-button-ghost text-xs h-7 px-2">Edit</button>
+            `;
+        }
+
+        function acceptSuggestion(id) {
+            const s = suggestions.find(x => x.id === id);
+            if (s) s.status = 'accepted';
+            renderSchedule();
+        }
+
+        function unaccept(id) {
+            const s = suggestions.find(x => x.id === id);
+            if (s) s.status = 'pending';
+            renderSchedule();
+        }
+
+        function modifySuggestion(id) {
+            const s = suggestions.find(x => x.id === id);
+            if (!s) return;
+            const newTime = prompt("Edit time slot", s.time);
+            if (newTime) {
+                s.time = newTime;
+                s.status = 'modified';
+                renderSchedule();
+            }
+        }
+
+        function toggleQuickReview() {
+            isQuickReview = !isQuickReview;
+            document.getElementById('quick-review-text').innerText = isQuickReview ? 'Exit Quick' : 'Quick Review';
+            renderSchedule();
+        }
+
+        function switchView(view) {
+            document.getElementById('view-chat').classList.toggle('hidden', view !== 'chat');
+            document.getElementById('view-schedule').classList.toggle('hidden', view !== 'schedule');
+            
+            document.getElementById('btn-chat').classList.toggle('bg-gray-900', view === 'chat');
+            document.getElementById('btn-chat').classList.toggle('text-white', view === 'chat');
+            document.getElementById('btn-schedule').classList.toggle('bg-gray-900', view === 'schedule');
+            document.getElementById('btn-schedule').classList.toggle('text-white', view === 'schedule');
+            
+            currentView = view;
+            
+            if (view === 'schedule') {
+                renderSchedule();
+            }
+        }
+
+        // ==================== Chat History ====================
+        let currentChatId = 1;
+
+        function newChat() {
+            const messages = document.getElementById('chat-messages');
+            const chatContent = document.getElementById('chat-content');
+
+            // Make sure we're showing the chat view, not Plan
+            document.getElementById('plan-content').classList.add('hidden');
+            chatContent.classList.remove('hidden');
+
+            messages.innerHTML = '';
+            chatContent.classList.add('initial-centered');
+
+            suggestions = [];
+            currentChatId = 0;
+            highlightActiveChat();
+        }
+
+        function switchChat(chatId) {
+            const messages = document.getElementById('chat-messages');
+            const chatContent = document.getElementById('chat-content');
+            currentChatId = chatId;
+
+            // Ensure we're in chat view (not Plan)
+            document.getElementById('plan-content').classList.add('hidden');
+            chatContent.classList.remove('hidden');
+
+            messages.innerHTML = '';
+            chatContent.classList.remove('initial-centered');
+
+            if (chatId === 1) {
+                // Study / deep work planning
+                messages.innerHTML = `
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="flex justify-end">
+                            <div class="chat-bubble bg-gray-900 text-white px-4 py-2.5 text-[16px] leading-[1.7] rounded-2xl rounded-br-md">
+                                Can you help me plan my study tasks for tomorrow?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="text-sm text-gray-500 mb-2">Thought for 2s</div>
+                        <div class="text-[16px] leading-[1.7] text-gray-800">
+                            Sure. Based on your current workload, I suggest starting with the highest-priority task first, then leaving a lighter review task for the evening. I can also turn this into a schedule if you want.
+                        </div>
+                        <div class="flex items-center gap-1 mt-2 text-gray-400">
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Copy"><i class="fa-regular fa-copy text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Regenerate"><i class="fa-solid fa-redo text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Like"><i class="fa-regular fa-thumbs-up text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="More"><i class="fa-solid fa-ellipsis-h text-sm"></i></button>
+                        </div>
+                    </div>
+                `;
+            } else if (chatId === 2) {
+                // Q4 Planning
+                messages.innerHTML = `
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="flex justify-end">
+                            <div class="chat-bubble bg-gray-900 text-white px-4 py-2.5 text-[16px] leading-[1.7] rounded-2xl rounded-br-md">
+                                Can you help me prepare the Q4 plan?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="text-sm text-gray-500 mb-2">Thought for 2s</div>
+                        <div class="text-[16px] leading-[1.7] text-gray-800">
+                            Of course. I recommend structuring it into four phases: Research, Drafting, Review, and Final Presentation. Want me to outline the timeline?
+                        </div>
+                        <div class="flex items-center gap-1 mt-2 text-gray-400">
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Copy"><i class="fa-regular fa-copy text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Regenerate"><i class="fa-solid fa-redo text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Like"><i class="fa-regular fa-thumbs-up text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="More"><i class="fa-solid fa-ellipsis-h text-sm"></i></button>
+                        </div>
+                    </div>
+                `;
+            } else if (chatId === 3) {
+                // Meetings & follow-ups
+                messages.innerHTML = `
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="flex justify-end">
+                            <div class="chat-bubble bg-gray-900 text-white px-4 py-2.5 text-[16px] leading-[1.7] rounded-2xl rounded-br-md">
+                                What are the key follow-ups from this week's meetings?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="text-sm text-gray-500 mb-2">Thought for 2s</div>
+                        <div class="text-[16px] leading-[1.7] text-gray-800">
+                            From the client sync: finalize the proposal by Friday. From the internal team meeting: schedule design review for next Tuesday. Shall I add these to your Plan?
+                        </div>
+                        <div class="flex items-center gap-1 mt-2 text-gray-400">
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Copy"><i class="fa-regular fa-copy text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Regenerate"><i class="fa-solid fa-redo text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="Like"><i class="fa-regular fa-thumbs-up text-sm"></i></button>
+                            <button class="p-1 hover:text-gray-600 transition-colors" title="More"><i class="fa-solid fa-ellipsis-h text-sm"></i></button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                messages.innerHTML = `
+                    <div class="max-w-[720px] mx-auto mb-12">
+                        <div class="text-sm text-gray-500 mb-2">Thought for 2s</div>
+                        <div class="text-[16px] leading-[1.7] text-gray-800">
+                            Got it, I've noted the previous meeting schedule.
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Scroll to bottom after loading messages
+            setTimeout(() => {
+                messages.scrollTop = messages.scrollHeight;
+            }, 0);
+
+            highlightActiveChat();
+        }
+
+        function highlightActiveChat() {
+            document.querySelectorAll('.chat-history-item').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Only highlight if we have a real chat id (not 0 or temp new chat id)
+            if (currentChatId && currentChatId > 0) {
+                const activeItem = document.querySelector(`.chat-history-item[data-chat-id="${currentChatId}"]`);
+                if (activeItem) {
+                    activeItem.classList.add('active');
+                }
+            }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            const maxHeight = 220;
+            textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
+        }
+
+        function init() {
+            // Start empty for centered input initial layout
+            document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('chat-content').classList.add('initial-centered');
+            // Do not add 'sidebar-open' by default — sidebar now starts collapsed
+            // document.body.classList.add('sidebar-open');
+
+            // Auto-resize the textarea on load for empty state
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                setTimeout(() => autoResizeTextarea(chatInput), 0);
+            }
+            
+            suggestions = [
+                { id: 1, title: "Prepare course portfolio for next Monday", time: "19:00 - 21:30", duration: "2.5h", priority: "High", status: "pending" },
+                { id: 2, title: "Follow up on client proposal feedback", time: "14:00 - 15:00", duration: "1h", priority: "Medium", status: "conflict" }
+            ];
+            
+            document.getElementById('btn-chat').classList.add('bg-gray-900', 'text-white');
+
+            // Page starts in empty state (Home/New Chat). No chat item should be selected/highlighted by default.
+            // Selection only happens when user explicitly clicks a chat item.
+            currentChatId = 0;
+            document.querySelectorAll('.chat-history-item').forEach(el => el.classList.remove('active'));
+        }
+
+        window.onload = init;
+    </script>
+
+    <!-- ==================== Global Search Overlay (restored, header button entry) ==================== -->
+    <div id="global-search-backdrop" class="global-search-backdrop" onclick="closeGlobalSearch()"></div>
+
+    <div id="global-search-panel" class="global-search-panel">
+        <div class="global-search-input-wrapper">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-search text-gray-400"></i>
+                <input id="global-search-input" type="text" placeholder="Search..." class="global-search-input flex-1"
+                       oninput="handleGlobalSearchInput(this.value)" onkeydown="handleGlobalSearchKeydown(event)">
+            </div>
+        </div>
+
+        <div class="global-search-body">
+            <div class="global-search-results">
+                <div>
+                    <div class="search-section-title">Actions</div>
+                    <div onclick="executeQuickAction('new-chat')" class="search-result-item">
+                        <i class="fa-solid fa-plus w-4 text-gray-500"></i>
+                        <div class="search-result-content"><div class="search-result-title">New chat</div></div>
+                    </div>
+                    <div onclick="executeQuickAction('open-plan')" class="search-result-item">
+                        <i class="fa-solid fa-calendar-alt w-4 text-gray-500"></i>
+                        <div class="search-result-content"><div class="search-result-title">Open Plan Review</div></div>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-y-auto" id="global-search-results-list"></div>
+            </div>
+
+            <div class="global-search-preview">
+                <div class="search-preview-header" id="global-search-preview-header"></div>
+                <div class="search-preview-body" id="global-search-preview-body"></div>
+            </div>
+        </div>
+
+        <div class="search-footer">
+            <div><span class="font-medium">Enter</span> to go</div>
+            <div><span class="font-medium">Esc</span> to close</div>
+            <div class="ml-auto text-xs">↑↓ to select</div>
+        </div>
+    </div>
+
+    <script>
+        let globalSearchOpen = false;
+        let globalSearchResults = [];
+        let globalSearchSelectedIndex = 0;
+        let currentSearchQuery = '';
+
+        const mockSearchData = [
+            { id: 'chat-1', type: 'chat', title: 'Schedule deep work for next week', time: '17m ago', group: 'Today', preview: 'User: I need to schedule at least 8 hours of deep work next week.', user: 'I need to schedule at least 8 hours of deep work next week.', ai: 'Sure. Based on your current workload, I suggest starting with the highest-priority task first, then leaving a lighter review task for the evening. I can also turn this into a schedule if you want.' },
+            { id: 'chat-2', type: 'chat', title: 'Prepare Q4 plan and client proposal', time: '3d ago', group: 'Last 7 days', preview: 'User: Help me prepare the Q4 plan and client proposal.', user: 'Help me prepare the Q4 plan and client proposal.', ai: 'Of course. I recommend structuring it into four phases: Research, Drafting, Review, and Final Presentation. Want me to outline the timeline?' },
+            { id: 'plan-1', type: 'plan', title: 'Q4 Product Roadmap Planning', time: '2d ago', group: 'Last 7 days', preview: 'Plan: Q4 Product Roadmap (High)' }
+        ];
+
+        function openGlobalSearch() {
+            const backdrop = document.getElementById('global-search-backdrop');
+            const panel = document.getElementById('global-search-panel');
+            const input = document.getElementById('global-search-input');
+            const btn = document.getElementById('sidebar-search-btn');
+
+            backdrop.classList.add('active');
+            panel.classList.add('active');
+            globalSearchOpen = true;
+            if (btn) btn.classList.add('!text-gray-900', '!bg-gray-100');
+
+            currentSearchQuery = '';
+            globalSearchSelectedIndex = 0;
+            renderGlobalSearchResults('');
+
+            setTimeout(() => { input.focus(); }, 30);
+        }
+
+        function closeGlobalSearch() {
+            const backdrop = document.getElementById('global-search-backdrop');
+            const panel = document.getElementById('global-search-panel');
+            const btn = document.getElementById('sidebar-search-btn');
+
+            backdrop.classList.remove('active');
+            panel.classList.remove('active');
+            globalSearchOpen = false;
+            if (btn) btn.classList.remove('!text-gray-900', '!bg-gray-100');
+
+            const input = document.getElementById('global-search-input');
+            if (input) input.value = '';
+        }
+
+        function renderGlobalSearchResults(query) {
+            const list = document.getElementById('global-search-results-list');
+            list.innerHTML = '';
+
+            let filtered = mockSearchData;
+            if (query.trim()) {
+                const q = query.toLowerCase();
+                filtered = mockSearchData.filter(i => i.title.toLowerCase().includes(q) || (i.preview && i.preview.toLowerCase().includes(q)));
+            }
+            globalSearchResults = filtered;
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="search-empty-state">No results found</div>';
+                document.getElementById('global-search-preview-header').innerHTML = '';
+                document.getElementById('global-search-preview-body').innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            const groups = {};
+            filtered.forEach(item => {
+                const g = item.group || 'Other';
+                if (!groups[g]) groups[g] = [];
+                groups[g].push(item);
+            });
+
+            Object.keys(groups).forEach(g => {
+                html += `<div class="search-section-title">${g}</div>`;
+                groups[g].forEach(item => {
+                    const idx = filtered.indexOf(item);
+                    const sel = (idx === globalSearchSelectedIndex) ? 'selected' : '';
+                    html += `
+                        <div class="search-result-item ${sel}" onclick="selectGlobalSearchResult(${idx})">
+                            <i class="fa-solid ${item.type === 'chat' ? 'fa-comments' : item.type === 'plan' ? 'fa-calendar-alt' : 'fa-bolt'} w-4 text-gray-400"></i>
+                            <div class="search-result-content">
+                                <div class="search-result-title">${item.title}</div>
+                                ${item.time ? `<div class="search-result-meta">${item.time}</div>` : ''}
+                            </div>
+                        </div>`;
+                });
+            });
+            list.innerHTML = html;
+            updateGlobalSearchPreview();
+        }
+
+        function selectGlobalSearchResult(idx) {
+            globalSearchSelectedIndex = idx;
+            renderGlobalSearchResults(currentSearchQuery);
+        }
+
+        function updateGlobalSearchPreview() {
+            const h = document.getElementById('global-search-preview-header');
+            const b = document.getElementById('global-search-preview-body');
+            const item = globalSearchResults[globalSearchSelectedIndex];
+            if (!item) { h.innerHTML = ''; b.innerHTML = '<div class="search-empty-state">Select an item to preview</div>'; return; }
+            h.innerHTML = `<div class="font-semibold">${item.title}</div><div class="text-xs text-gray-500">${item.time || ''}</div>`;
+            if (item.type === 'chat' && item.user && item.ai) {
+                // Compact chat preview (optically balanced): user bubble (right) + AI reply text (left with pl-2 indent for breathing). Increased space-y-3 for natural separation. No thinking/status or action buttons. Exact text preserved, read-only, no input. Other parts unchanged.
+                b.innerHTML = `
+                    <div class="search-preview-chat space-y-3">
+                        <div class="flex justify-end">
+                            <div class="chat-bubble bg-gray-900 text-white px-3 py-1.5 text-sm leading-[1.5] rounded-2xl rounded-br-md max-w-[82%]">
+                                ${item.user}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm leading-[1.5] text-gray-800 pl-2">
+                                ${item.ai}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                b.innerHTML = `<div>${(item.preview || '').replace(/\n/g,'<br>')}</div>`;
+            }
+        }
+
+        function handleGlobalSearchInput(v) { currentSearchQuery = v; renderGlobalSearchResults(v); }
+        function handleGlobalSearchKeydown(e) {
+            if (e.key === 'Escape') { closeGlobalSearch(); return; }
+            if (e.key === 'ArrowDown') { globalSearchSelectedIndex = Math.min(globalSearchSelectedIndex + 1, globalSearchResults.length - 1); renderGlobalSearchResults(currentSearchQuery); }
+            if (e.key === 'ArrowUp') { globalSearchSelectedIndex = Math.max(globalSearchSelectedIndex - 1, 0); renderGlobalSearchResults(currentSearchQuery); }
+            if (e.key === 'Enter' && globalSearchResults[globalSearchSelectedIndex]) goToSearchResult(globalSearchSelectedIndex);
+        }
+
+        function goToSearchResult(idx) {
+            const item = globalSearchResults[idx];
+            closeGlobalSearch();
+            setTimeout(() => {
+                if (item.type === 'chat') { showChatView(); alert('(Demo) Navigate to: ' + item.title); }
+                else if (item.type === 'plan') showPlanView();
+                else if (item.id === 'action-new-chat') newChat();
+                else if (item.id === 'action-open-plan') showPlanView();
+            }, 50);
+        }
+
+        function executeQuickAction(type) {
+            closeGlobalSearch();
+            setTimeout(() => { if (type === 'new-chat') newChat(); if (type === 'open-plan') showPlanView(); }, 50);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                globalSearchOpen ? closeGlobalSearch() : openGlobalSearch();
+            }
+        });
+
+        console.log('%c[Aether] Global Search Overlay restored. Header search button + Cmd+S ready.', 'color:#6b7280');
+    </script>
+
+    <!-- Reusable Secondary Menu Container -->
+    <div id="aether-secondary-menu" class="aether-secondary-menu"></div>
+
+    <!-- Tooltip for truncated chat titles (Gemini-style, floats outside sidebar) -->
+    <div id="chat-title-tooltip" class="chat-title-tooltip" style="display:none; position:fixed;"></div>
+
+    <script>
+        // ==================== Secondary Menu System ====================
+        const secondaryMenu = document.getElementById('aether-secondary-menu');
+        let currentMenuTrigger = null;
+
+        function showSecondaryMenu(trigger, items) {
+            if (!secondaryMenu) return;
+
+            // Build menu content
+            let html = '';
+            items.forEach((item, index) => {
+                if (item.type === 'divider') {
+                    html += `<div class="aether-menu-divider"></div>`;
+                } else {
+                    html += `
+                        <div class="aether-menu-item" data-index="${index}">
+                            ${item.icon ? `<i class="fa-solid ${item.icon}"></i>` : ''}
+                            <span>${item.label}</span>
+                        </div>
+                    `;
+                }
+            });
+
+            secondaryMenu.innerHTML = html;
+
+            // Position the menu
+            const rect = trigger.getBoundingClientRect();
+            secondaryMenu.style.display = 'block';
+
+            const menuHeight = secondaryMenu.offsetHeight;
+
+            // Smart positioning: prefer below, but flip above if not enough space below
+            // (important for + buttons at bottom of page, like in chat/plan input)
+            let top = rect.bottom + 8;
+            let left = rect.left;
+
+            const spaceBelow = window.innerHeight - rect.bottom;
+            if (spaceBelow < menuHeight + 8 && rect.top > menuHeight + 8) {
+                // Not enough space below, open upwards instead
+                top = rect.top - menuHeight - 8;
+            }
+
+            // Special case for profile (always upwards, as before)
+            if (trigger.id === 'profile-trigger') {
+                top = rect.top - menuHeight - 8;
+                left = rect.left;
+            }
+
+            // Clamp to viewport to avoid clipping
+            if (top < 8) top = 8;
+            if (top + menuHeight > window.innerHeight - 8) {
+                top = window.innerHeight - menuHeight - 8;
+            }
+            if (left < 8) left = 8;
+            if (left + secondaryMenu.offsetWidth > window.innerWidth - 8) {
+                left = window.innerWidth - secondaryMenu.offsetWidth - 8;
+            }
+
+            secondaryMenu.style.top = `${top}px`;
+            secondaryMenu.style.left = `${left}px`;
+
+            currentMenuTrigger = trigger;
+
+            // Attach click handlers
+            secondaryMenu.querySelectorAll('.aether-menu-item').forEach((el, idx) => {
+                el.onclick = () => {
+                    const item = items[idx];
+                    if (item && item.onClick) item.onClick();
+                    hideSecondaryMenu();
+                };
+            });
+        }
+
+        function hideSecondaryMenu() {
+            if (secondaryMenu) {
+                secondaryMenu.style.display = 'none';
+            }
+            currentMenuTrigger = null;
+        }
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (secondaryMenu && secondaryMenu.style.display === 'block') {
+                if (!secondaryMenu.contains(e.target) && currentMenuTrigger !== e.target) {
+                    hideSecondaryMenu();
+                }
+            }
+        });
+
+        // Profile menu
+        const profileTrigger = document.getElementById('profile-trigger');
+        if (profileTrigger) {
+            profileTrigger.onclick = (e) => {
+                e.stopImmediatePropagation();
+                const items = [
+                    { icon: 'fa-cog', label: 'Setting', onClick: () => alert('Open Settings (demo)') },
+                    { type: 'divider' },
+                    { icon: 'fa-sign-out-alt', label: 'Log out', onClick: () => alert('Logging out... (demo)') }
+                ];
+                showSecondaryMenu(profileTrigger, items);
+            };
+        }
+
+        // Chat + button menu
+        const chatPlus = document.getElementById('chat-plus-btn');
+        if (chatPlus) {
+            chatPlus.onclick = (e) => {
+                e.stopImmediatePropagation();
+                const items = [
+                    { icon: 'fa-file-upload', label: 'Add file', onClick: () => alert('Add file (demo)') },
+                    { icon: 'fa-magic', label: 'Skills', onClick: () => alert('Skills (demo)') }
+                ];
+                showSecondaryMenu(chatPlus, items);
+            };
+        }
+
+        // Plan + button menu
+        const planPlus = document.getElementById('plan-plus-btn');
+        if (planPlus) {
+            planPlus.onclick = (e) => {
+                e.stopImmediatePropagation();
+                const items = [
+                    { icon: 'fa-file-upload', label: 'Add file', onClick: () => alert('Add file (demo)') },
+                    { icon: 'fa-magic', label: 'Skills', onClick: () => alert('Skills (demo)') }
+                ];
+                showSecondaryMenu(planPlus, items);
+            };
+        }
+
+        // Chat history three-dot menu (reuses the standard secondary menu)
+        function showChatMenu(triggerBtn, chatId) {
+            hideChatTitleTooltip();
+            const item = triggerBtn.closest('.chat-history-item');
+            const titleEl = item ? item.querySelector('.truncate') : null;
+            const currentTitle = titleEl ? titleEl.textContent.trim() : 'Chat';
+
+            const items = [
+                { icon: 'fa-edit', label: 'Rename', onClick: () => {
+                    const newName = prompt('Rename chat:', currentTitle);
+                    if (newName && titleEl) titleEl.textContent = newName;
+                }},
+                { icon: 'fa-archive', label: 'Archive', onClick: () => alert('Archived (demo)') },
+                { type: 'divider' },
+                { icon: 'fa-trash', label: 'Delete', onClick: () => alert('Deleted (demo)') }
+            ];
+            showSecondaryMenu(triggerBtn, items);
+        }
+
+        // ==================== Truncated Chat Title Tooltip (Gemini style) ====================
+        let chatTooltipEl = null;
+
+        function initChatTooltips() {
+            const container = document.querySelector('#sidebar .flex-1.overflow-y-auto');
+            if (!container) return;
+
+            // Use capture to catch hovers on children
+            container.addEventListener('mouseenter', function(e) {
+                const item = e.target.closest && e.target.closest('.chat-history-item');
+                if (!item) return;
+
+                const titleEl = item.querySelector('.truncate');
+                if (!titleEl) return;
+
+                // Only show if actually truncated (scrollWidth > visible width)
+                if (titleEl.scrollWidth <= titleEl.clientWidth + 3) return;
+
+                const fullText = titleEl.textContent.trim();
+                if (!fullText) return;
+
+                showChatTitleTooltip(item, fullText);
+            }, true);
+
+            container.addEventListener('mouseleave', function(e) {
+                const item = e.target.closest && e.target.closest('.chat-history-item');
+                if (item) hideChatTitleTooltip();
+            }, true);
+        }
+
+        function showChatTitleTooltip(item, text) {
+            if (!chatTooltipEl) chatTooltipEl = document.getElementById('chat-title-tooltip');
+            if (!chatTooltipEl) return;
+
+            chatTooltipEl.textContent = text;
+            chatTooltipEl.style.display = 'block';
+
+            const rect = item.getBoundingClientRect();
+            const tt = chatTooltipEl;
+
+            // Position to the right of the sidebar item, vertically centered
+            let left = rect.right + 10;
+            let top = rect.top + (rect.height / 2) - (tt.offsetHeight / 2);
+
+            // Keep inside viewport
+            const vw = window.innerWidth;
+            if (left + tt.offsetWidth > vw - 8) {
+                left = vw - tt.offsetWidth - 8;
+            }
+
+            tt.style.left = left + 'px';
+            tt.style.top = (top + window.scrollY) + 'px';
+        }
+
+        function hideChatTitleTooltip() {
+            if (chatTooltipEl) chatTooltipEl.style.display = 'none';
+        }
+
+        // Initialize chat tooltips (after DOM ready)
+        initChatTooltips();
+
+        console.log('%c[Aether] Secondary menus initialized (Profile + Input + buttons).', 'color:#6b7280');
+    </script>
+</body>
+</html>
