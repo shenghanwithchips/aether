@@ -273,6 +273,7 @@
 
         #sidebar.collapsed {
             width: 64px;
+            cursor: pointer;
         }
 
         #sidebar.collapsed .sidebar-text {
@@ -706,13 +707,13 @@
     <div class="flex h-screen">
         
         <!-- Collapsible Sidebar -->
-        <div id="sidebar" class="w-64 bg-white border-r flex flex-col overflow-hidden collapsed">
+        <div id="sidebar" class="w-64 bg-white border-r flex flex-col overflow-hidden collapsed" onclick="if (sidebarCollapsed) toggleSidebar();">
             <!-- Sidebar Header: App identity (fixed, no divider) -->
             <div class="px-3 py-3 flex items-center justify-between">
                 <div class="px-3 sidebar-brand-left">
                     <span class="sidebar-text text-base font-semibold text-gray-800">Aether</span>
                 </div>
-                <button onclick="toggleSidebar()" class="p-1 hover:bg-gray-100 cursor-pointer rounded-xl items-center justify-center sidebar-icon-only">
+                <button onclick="event.stopPropagation(); toggleSidebar();" class="p-1 hover:bg-gray-100 cursor-pointer rounded-xl items-center justify-center sidebar-icon-only">
                     <i id="sidebar-chevron" class="fa-solid fa-chevron-right text-gray-600"></i>
                 </button>
             </div>
@@ -725,7 +726,7 @@
                     <span class="sidebar-text">New Chat</span>
                 </div>
                 <!-- Collapsed New Chat icon -->
-                <div onclick="newChat()" 
+                <div onclick="event.stopPropagation(); newChat();" id="collapsed-new-chat"
                      class="hidden w-10 h-10 items-center justify-center hover:bg-gray-100 cursor-pointer rounded-xl sidebar-icon-only">
                     <i class="fa-solid fa-plus text-gray-600"></i>
                 </div>
@@ -743,7 +744,7 @@
                     <span class="sidebar-text">Search</span>
                 </div>
                 <!-- Collapsed Search icon -->
-                <div onclick="openGlobalSearch()" 
+                <div onclick="event.stopPropagation(); openGlobalSearch();" id="collapsed-search"
                      class="hidden w-10 h-10 items-center justify-center hover:bg-gray-100 cursor-pointer rounded-xl sidebar-icon-only">
                     <i class="fa-solid fa-search text-gray-600"></i>
                 </div>
@@ -755,7 +756,7 @@
                     <span class="sidebar-text">Plan</span>
                 </div>
                 <!-- Collapsed Plan icon -->
-                <div onclick="showPlanView()" 
+                <div onclick="event.stopPropagation(); showPlanView();" id="collapsed-plan"
                      class="hidden w-10 h-10 items-center justify-center hover:bg-gray-100 cursor-pointer rounded-xl sidebar-icon-only">
                     <i class="fa-solid fa-calendar-alt text-gray-600"></i>
                 </div>
@@ -763,7 +764,7 @@
 
             <!-- Chat History -->
             <div class="flex-1 overflow-y-auto overflow-x-hidden px-3 pt-3 pb-2 space-y-1 text-sm">
-                <div onclick="showChatView()" class="px-3 py-1 text-xs font-normal text-gray-400 sidebar-text mb-1">Chats</div>
+                <div onclick="event.stopPropagation(); showChatView();" class="px-3 py-1 text-xs font-normal text-gray-400 sidebar-text mb-1">Chats</div>
                 
                 <div onclick="switchChat(1)" data-chat-id="1" class="chat-history-item group px-3 py-2 rounded-xl cursor-pointer hover:bg-gray-100 flex items-center gap-2">
                     <div class="flex-1 min-w-0 overflow-hidden">
@@ -852,19 +853,19 @@
             <!-- Schedule Content (hidden by default) -->
             <div id="plan-content" class="hidden flex-1 flex flex-col bg-white">
                 <!-- Scrollable content area (title + cards) -->
-                <div class="flex-1 overflow-y-auto p-6">
-                    <div class="max-w-5xl mx-auto w-full">
-                        <!-- Title -->
-                        <div class="mb-6">
+                <div class="flex-1 flex flex-col overflow-y-auto p-6">
+                    <div class="max-w-5xl mx-auto w-full flex-1 min-h-0 flex flex-col">
+                    <!-- Title -->
+                        <div class="mb-6 flex-shrink-0">
                             <div class="text-2xl font-semibold tracking-tight">Plan Review</div>
-                            <div class="text-sm text-muted-foreground">Generated from recent conversation · Oct 15</div>
                         </div>
 
-                        <!-- Cards Grid: Two-column dashboard layout -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 md:grid-rows-[auto_auto] gap-6">
+                    <!-- Cards Grid: Two-column dashboard layout -->
+                    <div class="flex-1 min-h-0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 md:grid-rows-[1fr_1fr] gap-6 h-full">
                             
                             <!-- Next - Large left card (spans both rows on desktop) -->
-                            <div class="md:row-span-2">
+                            <div class="md:row-span-2 h-full">
                                 <div class="shadcn-card p-6 h-full overflow-auto">
                                     <div class="font-semibold text-xl mb-4 flex items-center gap-2 tracking-tight">
                                         Next
@@ -877,7 +878,7 @@
                             </div>
 
                             <!-- Tomorrow - Right top -->
-                            <div>
+                            <div class="h-full">
                                 <div class="shadcn-card p-5 h-full overflow-auto">
                                     <div class="font-semibold mb-3 tracking-tight">Tomorrow</div>
                                     <div id="tomorrow-list" class="space-y-2 text-sm">
@@ -887,7 +888,7 @@
                             </div>
 
                             <!-- This Week - Right bottom -->
-                            <div>
+                            <div class="h-full">
                                 <div class="shadcn-card p-5 h-full overflow-auto">
                                     <div class="font-semibold mb-3 tracking-tight">This Week</div>
                                     <div id="week-list" class="space-y-2 text-sm">
@@ -897,6 +898,7 @@
                             </div>
 
                         </div>
+                    </div>
                     </div>
                 </div>
 
@@ -1468,7 +1470,7 @@
                     const idx = filtered.indexOf(item);
                     const sel = (idx === globalSearchSelectedIndex) ? 'selected' : '';
                     html += `
-                        <div class="search-result-item ${sel}" onclick="selectGlobalSearchResult(${idx})">
+                        <div class="search-result-item ${sel}" onmouseenter="selectGlobalSearchResult(${idx})" onclick="goToSearchResult(${idx})">
                             <i class="fa-solid ${item.type === 'chat' ? 'fa-comments' : item.type === 'plan' ? 'fa-calendar-alt' : 'fa-bolt'} w-4 text-gray-400"></i>
                             <div class="search-result-content">
                                 <div class="search-result-title">${item.title}</div>
@@ -1484,6 +1486,8 @@
         function selectGlobalSearchResult(idx) {
             globalSearchSelectedIndex = idx;
             renderGlobalSearchResults(currentSearchQuery);
+            const input = document.getElementById('global-search-input');
+            if (input) input.focus();
         }
 
         function updateGlobalSearchPreview() {
@@ -1735,7 +1739,11 @@
             if (!chatTooltipEl) chatTooltipEl = document.getElementById('chat-title-tooltip');
             if (!chatTooltipEl) return;
 
-            chatTooltipEl.textContent = text;
+            if (text.indexOf('<') !== -1) {
+                chatTooltipEl.innerHTML = text;
+            } else {
+                chatTooltipEl.textContent = text;
+            }
             chatTooltipEl.style.display = 'block';
 
             const rect = item.getBoundingClientRect();
@@ -1761,6 +1769,21 @@
 
         // Initialize chat tooltips (after DOM ready)
         initChatTooltips();
+
+        function initSidebarIconTooltips() {
+            const icons = [
+                {id:'collapsed-new-chat', text:'New Chat'},
+                {id:'collapsed-search', text:'Search<br>⌘S'},
+                {id:'collapsed-plan', text:'Plan'}
+            ];
+            icons.forEach(({id, text}) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('mouseenter', () => showChatTitleTooltip(el, text));
+                el.addEventListener('mouseleave', hideChatTitleTooltip);
+            });
+        }
+        initSidebarIconTooltips();
 
         console.log('%c[Aether] Secondary menus initialized (Profile + Input + buttons).', 'color:#6b7280');
     </script>
